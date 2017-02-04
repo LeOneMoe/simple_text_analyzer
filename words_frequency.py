@@ -130,11 +130,21 @@ def extract_words(text, min_length=None):
         # анонимная функция `lambda word: len(word) > min_length`.
         # Это такая же функция как и все остальные, только данная функция
         # не имеет имени.
-        words = filter(lambda wor: len(word) > min_length, words)
+        words = filter(lambda word: len(word) > min_length, words)
 
     # Так как функция filter на выходе дает не  список а генератор, то убедимся,
     # что функция все же возвращает список
     return list(words)
+
+
+def ignore_case(words, ignore=None):
+    if ignore == True:
+        # Приеобразование всех слов к нижнему регистру, если пользователь указал
+        # --register-ignor=True.
+        for word in words:
+            word.lower()
+
+    return words
 
 
 def main():
@@ -147,7 +157,8 @@ def main():
     parser.add_argument(
         "-f", "--filepath",
         required=True,
-        help="File path")
+        help="File path"
+    )
     parser.add_argument(
         "-n",
         help="Number of words to print. Default: 10",
@@ -159,13 +170,18 @@ def main():
         type=int,
         help="Minimum word length for evaluation. Default: None"
     )
-
+    parser.add_argument(
+        "-i", "--ignore-case",
+        action="store_true",
+        help="Ignoring register of word.Default: None"
+    )
     # В переменной args будет находится экземпляр класс парсера, в котором уже
     # будут все полученные аргументы
     args = parser.parse_args()
 
     text = load_file_content(args.filepath)
     words = extract_words(text, args.min_length)
+    ignore = ignore_case(args.ignore)
 
     # Применяем collections.Counter ко всему нашему тексту как это было в примере
     # выше
