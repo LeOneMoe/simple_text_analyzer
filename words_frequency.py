@@ -111,7 +111,7 @@ def load_file_content(filepath):
 """Функция возвращает список слов из текста `text`, которые строго больше длины
 `min_length`.
 """
-def extract_words(text, min_length=None):
+def extract_words(text, min_length=None, ignore_case=False):
     # Регулярное выражение - "(\w+)" означает, что нужно найти все слова(не знаки,
     # не цифры, ничего, только слова)
 
@@ -121,6 +121,9 @@ def extract_words(text, min_length=None):
 
     # На выходе в переменной `words` будет список всех слов из данного текста
     words = re.findall(r"(\w+)", text, re.UNICODE)
+
+    if ignore_case:
+        words = [word.lower() for word in words]
 
     if min_length:
         # Функция filter оставляет в последовательности только те элементы,
@@ -135,16 +138,6 @@ def extract_words(text, min_length=None):
     # Так как функция filter на выходе дает не  список а генератор, то убедимся,
     # что функция все же возвращает список
     return list(words)
-
-
-def ignore_case(words, ignore=None):
-    if ignore == True:
-        # Приеобразование всех слов к нижнему регистру, если пользователь указал
-        # --register-ignor=True.
-        for word in words:
-            word.lower()
-
-    return words
 
 
 def main():
@@ -180,8 +173,7 @@ def main():
     args = parser.parse_args()
 
     text = load_file_content(args.filepath)
-    words = extract_words(text, args.min_length)
-    ignore = ignore_case(args.ignore)
+    words = extract_words(text, args.min_length, args.ignore_case)
 
     # Применяем collections.Counter ко всему нашему тексту как это было в примере
     # выше
